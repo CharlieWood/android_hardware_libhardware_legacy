@@ -448,6 +448,7 @@ int wifi_connect_to_supplicant()
 #endif
 
 
+#if ATHEROS_WIFI_SDK
     snprintf(ifname, sizeof(ifname), "%s/%s", IFACE_DIR, iface);
     LOGE("ctrl ifname = %s\n", ifname);
 
@@ -464,8 +465,13 @@ int wifi_connect_to_supplicant()
         }
     }
 
-#if ATHEROS_WIFI_SDK
     LOGE("wifi_connect_to_supplicant: ifname = %s\n", ifname);
+#else
+    if (access(IFACE_DIR, F_OK) == 0) {
+        snprintf(ifname, sizeof(ifname), "%s/%s", IFACE_DIR, iface);
+    } else {
+        strlcpy(ifname, iface, sizeof(ifname));
+    }
 #endif
 
     ctrl_conn = wpa_ctrl_open(ifname);
